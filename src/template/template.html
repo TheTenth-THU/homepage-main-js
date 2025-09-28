@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Web Page - CHEN Zhen-Xing</title>
+    <link rel="stylesheet" href="fonts/font.css">
+    <link rel="stylesheet" href="styles/basic.css">
+</head>
+<body>
+    <header id="pageHeader">
+        <div class="top-info">
+            <p class="nav-links">
+                | <a href="#about">About</a> |
+                <a href="#projects">Projects</a> |
+                <a href="#publications">Publications</a> |
+                <a href="#contact">Contact</a> |
+            </p>
+            <h1>CHEN Zhen-Xing  陈禛兴</h1>
+            <p>
+                Department of Electronic Engineering<br>
+                Tsinghua University
+            </p>
+        </div>
+        <div class="logo">
+            <img src="assets/logo.png" alt="Your Logo" width="100">
+        </div>
+    </header>
+    <main>
+    </main>
+    <script>
+        // Shrink header on scroll
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('pageHeader');
+            if (window.scrollY > 50) {
+                header.classList.add('shrink');
+            } else {
+                header.classList.remove('shrink');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+/* CMU Serif */
+@font-face {
+    font-family: "CMU Serif";
+    src: url("fonts/CMU.SERIF-ROMAN.woff2");
+    font-weight: normal;
+}
+@font-face {
+    font-family: "CMU Serif";
+    src: url("fonts/CMU.SERIF-BOLD.woff2");
+    font-weight: bold;
+}
+@font-face {
+    font-family: "CMU Serif";
+    src: url("fonts/CMU.SERIF-ITALIC.woff2");
+    font-style: italic;
+}
+
+/* Source Serif CN */
+@font-face {
+    font-family: "Source Serif";
+    src: url("fonts/SOURCEHANSERIFCN-REGULAR.woff2");
+    font-weight: normal;
+}
+@font-face {
+    font-family: "Source Serif";
+    src: url("fonts/SOURCEHANSERIFCN-SEMIBOLD.woff2");
+    font-weight: bold;
+}

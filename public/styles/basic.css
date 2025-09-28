@@ -1,0 +1,85 @@
+body {
+    margin: 0;
+    font-family: "CMU Serif", "Source Serif", serif;
+    font-size: 18px;
+}
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(30deg, #153F51, #470651);
+    color: #fff;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    transition: height 0.3s ease, padding 0.3s ease;
+    height: 220px;
+    padding: 0px 20px;
+    z-index: 1000;
+}
+.top-info {
+    padding: 20px 20px;
+}
+.top-info h1 {
+    margin: 20px 0px -5px 0px;
+    transition: font-size 0.3s ease, margin 0.3s ease;
+}
+.logo img {
+    margin: 20px 10px 0px 0px;
+    width: 180px;
+    height: 200px;
+    object-fit: cover;
+    object-position: top;
+    transition: width 0.3s ease, height 0.3s ease;
+}
+header.shrink {
+    height: 120px;
+    padding: 0px 20px;
+}
+header.shrink .top-info h1{
+    font-size: 1.5rem;
+    margin: -15px 0px 0px 0px;
+}
+header.shrink .logo img {
+    width: 70px;
+    height: 110px;
+}
+
+.nav-links a {
+    color: #b3dcef;
+    font-weight: bold;
+}
+
+main {
+    padding-top: 250px; /* extra space to ensure content not hidden by fixed header */
+    padding-left: 40px;
+    padding-right: 40px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+section {
+    margin-bottom: 2rem;
+}
+
+a {
+    color: #470651;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+.italic {
+    font-style: italic;
+}
+
+.pic-insert p {
+    text-align: right;
+    font-size: 1rem;
+    font-style: italic;
+    color: #666;
+}

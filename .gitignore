@@ -148,6 +148,7 @@ dist
 
 # Stores VSCode versions used for testing VSCode extensions
 
+.vscode/
 .vscode-test
 
 # yarn v2
@@ -165,3 +166,9 @@ dist
 .env*
 !.env.example
 .wrangler/
+
+# private test files
+
+private/
+.vscode/settings.json
+test/test.js
