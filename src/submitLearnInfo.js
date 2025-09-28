@@ -31,7 +31,8 @@ async function submitLearnInfo_toDatabase(database, semester, courses, assignmen
         .run();
     console.log({ 
         message: `Queried semester from database.`,
-        semesterQuery
+        semesterQuery,
+        semester
     });
     if (!semesterQuery.success) {
         // Initial query fails
@@ -46,7 +47,8 @@ async function submitLearnInfo_toDatabase(database, semester, courses, assignmen
             .run();
         console.log({
             message: `Inserted new semester ${semester} into database.`,
-            semesterInsert
+            semesterInsert,
+            semester
         });
         if (!semesterInsert.success) {
             // Insertion fails
@@ -59,7 +61,8 @@ async function submitLearnInfo_toDatabase(database, semester, courses, assignmen
             .run();
         console.log({
             message: `Updated semester ${semester} to current in database.`,
-            semesterUpdate
+            semesterUpdate,
+            semester
         });
         if (!semesterUpdate.success) {
             // Update fails
@@ -73,7 +76,8 @@ async function submitLearnInfo_toDatabase(database, semester, courses, assignmen
         .run();
     console.log({
         message: `Queried existing courses from database.`,
-        courseQuery
+        courseQuery,
+        semester
     });
     if (!courseQuery.success) {
         // Initial query fails
@@ -101,7 +105,8 @@ async function submitLearnInfo_toDatabase(database, semester, courses, assignmen
 
             console.log({
                 message: `Inserted new course ${unique_name} (${course_id}) into database.`,
-                courseInsert
+                courseInsert,
+                course: { course_id, course_name, teacher, course_code, unique_name, semester }
             });
             if (!courseInsert.success) {
                 failCount++;
@@ -120,7 +125,8 @@ async function submitLearnInfo_toDatabase(database, semester, courses, assignmen
             .run();
         console.log({
             message: `Queried existing assignments for course ${unique_name} (${course_id}) from database.`,
-            assignmentQuery
+            assignmentQuery,
+            course: { course_id, unique_name }
         });
         if (!assignmentQuery.success) {
             failCount++;
@@ -148,7 +154,8 @@ async function submitLearnInfo_toDatabase(database, semester, courses, assignmen
 
                 console.log({
                     message: `Inserted new assignment ${title} for course ${unique_name} (${course_id}) into database.`,
-                    assignmentInsert
+                    assignmentInsert,
+                    assignment: { course_id, course_name_and_code, title, due_date, description, file_link, is_submitted }
                 });
                 if (!assignmentInsert.success) {
                     failCount++;
@@ -168,7 +175,9 @@ async function submitLearnInfo_toDatabase(database, semester, courses, assignmen
                         .run();
                     console.log({
                         message: `Updated submission status of assignment ${assignment_id} (${title}) for course ${unique_name} (${course_id}) in database.`,
-                        assignmentUpdate
+                        assignmentUpdate,
+                        existing: {is_submitted: existingAssignment.is_submitted},
+                        update: {is_submitted: is_submitted}
                     });
                     if (!assignmentUpdate.success) {
                         failCount++;
@@ -186,7 +195,9 @@ async function submitLearnInfo_toDatabase(database, semester, courses, assignmen
                         .run();
                     console.log({
                         message: `Updated details${existingAssignment.due_date !== due_date ? ' (due_date)' : ''}${existingAssignment.description !== description ? ' (description)' : ''}${existingAssignment.annex_link !== file_link ? ' (annex_link)' : ''} for assignment ${assignment_id} (${title}) for course ${unique_name} (${course_id}) in database.`,
-                        assignmentUpdate
+                        assignmentUpdate,
+                        existing: {due_date: existingAssignment.due_date, description: existingAssignment.description, annex_link: existingAssignment.annex_link},
+                        update: {due_date, description, file_link}
                     });
                     if (!assignmentUpdate.success) {
                         failCount++;
@@ -223,7 +234,8 @@ async function submitLearnInfo_toTodoist(authToken, database, semester) {
         .run();
     console.log({
         message: `Queried courses from database for Todoist.`,
-        courseQuery
+        courseQuery,
+        semester
     });
     if (!courseQuery.success) {
         return { taskAddCount: 0, taskUpdateCount: 0, failCount: 1 };
@@ -247,7 +259,8 @@ async function submitLearnInfo_toTodoist(authToken, database, semester) {
             .run();
         console.log({
             message: `Queried assignments for course ${course_name} (${course_id}) from database for Todoist.`,
-            assignmentQuery
+            assignmentQuery,
+            course: { course_id, course_name }
         });
         if (!assignmentQuery.success) {
             failureCount++;
@@ -268,7 +281,8 @@ async function submitLearnInfo_toTodoist(authToken, database, semester) {
                 .run();
             console.log({
                 message: `Marked assignment ${assignment.assignment_id} (${assignment.title}) as ignored in database.`,
-                markIgnored
+                markIgnored,
+                assignment
             });
             if (!markIgnored.success) {
                 failureCount++;
