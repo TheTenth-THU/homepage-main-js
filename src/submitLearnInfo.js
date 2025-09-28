@@ -15,7 +15,7 @@ async function submitLearnInfo_toDatabase(database, semester, courses, assignmen
     const parsedCourses = JSON.parse(courses);
     const parsedAssignments = JSON.parse(assignments);
     console.debug({
-        message: 'Parsed courses and assignments',
+        message: 'Parsed courses and assignments.',
         parsedCourses,
         parsedAssignments
     })
@@ -29,7 +29,10 @@ async function submitLearnInfo_toDatabase(database, semester, courses, assignmen
     const semesterQuery = await database.prepare('SELECT * FROM Semesters WHERE semester = ?')
         .bind(semester)
         .run();
-    console.log(`${semesterQuery.success ? 'Success' : 'Failed'} to query semester from database.`);
+    console.log({ 
+        message: `Queried semester from database.`,
+        semesterQuery
+    });
     if (!semesterQuery.success) {
         // Initial query fails
         return { courseInsertCount, assignmentInsertCount, assignmentUpdateCount, failCount: parsedCourses.length };
@@ -41,7 +44,10 @@ async function submitLearnInfo_toDatabase(database, semester, courses, assignmen
                   (new Date() + 18 * 7 * 24 * 60 * 60 * 1000).toDateString(), 
                   1)
             .run();
-        console.log(`${semesterInsert.success ? 'Success' : 'Failed'} to insert new semester ${semester} into database.`);
+        console.log({
+            message: `Inserted new semester ${semester} into database.`,
+            semesterInsert
+        });
         if (!semesterInsert.success) {
             // Insertion fails
             return { courseInsertCount, assignmentInsertCount, assignmentUpdateCount, failCount: parsedCourses.length };
@@ -51,7 +57,10 @@ async function submitLearnInfo_toDatabase(database, semester, courses, assignmen
         const semesterUpdate = await database.prepare('UPDATE Semesters SET is_current = 1 WHERE semester = ?')
             .bind(semester)
             .run();
-        console.log(`${semesterUpdate.success ? 'Success' : 'Failed'} to update semester ${semester} to current in database.`);
+        console.log({
+            message: `Updated semester ${semester} to current in database.`,
+            semesterUpdate
+        });
         if (!semesterUpdate.success) {
             // Update fails
             return { courseInsertCount, assignmentInsertCount, assignmentUpdateCount, failCount: parsedCourses.length };
@@ -62,7 +71,10 @@ async function submitLearnInfo_toDatabase(database, semester, courses, assignmen
     const courseQuery = await database.prepare('SELECT * FROM Courses WHERE semester = ?')
         .bind(semester)
         .run();
-    console.log(`${courseQuery.success ? 'Success' : 'Failed'} to query existing courses from database.`);
+    console.log({
+        message: `Queried existing courses from database.`,
+        courseQuery
+    });
     if (!courseQuery.success) {
         // Initial query fails
         return { courseInsertCount, assignmentInsertCount, assignmentUpdateCount, failCount: parsedCourses.length };
@@ -87,7 +99,10 @@ async function submitLearnInfo_toDatabase(database, semester, courses, assignmen
                 .bind(course_id, course_name[0], course_name[1], unique_name, teacher[0], teacher[1], course_code, semester)
                 .run();
 
-            console.log(`${courseInsert.success ? 'Success' : 'Failed'} to insert new course ${unique_name} (${course_id}) into database.`);
+            console.log({
+                message: `Inserted new course ${unique_name} (${course_id}) into database.`,
+                courseInsert
+            });
             if (!courseInsert.success) {
                 failCount++;
                 continue;
@@ -103,7 +118,10 @@ async function submitLearnInfo_toDatabase(database, semester, courses, assignmen
         const assignmentQuery = await database.prepare('SELECT * FROM Assignments WHERE course_id = ?')
             .bind(course_id)
             .run();
-        console.log(`${assignmentQuery.success ? 'Success' : 'Failed'} to query existing assignments for course ${unique_name} (${course_id}) from database.`);
+        console.log({
+            message: `Queried existing assignments for course ${unique_name} (${course_id}) from database.`,
+            assignmentQuery
+        });
         if (!assignmentQuery.success) {
             failCount++;
             continue;
@@ -128,7 +146,10 @@ async function submitLearnInfo_toDatabase(database, semester, courses, assignmen
                     .bind(course_id, course_name_and_code, title, due_date, description, file_link, is_submitted)
                     .run();
 
-                console.log(`${assignmentInsert.success ? 'Success' : 'Failed'} to insert new assignment ${title} for course ${unique_name} (${course_id}) into database.`);
+                console.log({
+                    message: `Inserted new assignment ${title} for course ${unique_name} (${course_id}) into database.`,
+                    assignmentInsert
+                });
                 if (!assignmentInsert.success) {
                     failCount++;
                     continue;
@@ -145,7 +166,10 @@ async function submitLearnInfo_toDatabase(database, semester, courses, assignmen
                     const assignmentUpdate = await database.prepare('UPDATE Assignments SET is_submitted = ? WHERE course_id = ? AND assignment_id = ?')
                         .bind(is_submitted, course_id, assignment_id)
                         .run();
-                    console.log(`${assignmentUpdate.success ? 'Success' : 'Failed'} to update submission status of assignment ${assignment_id} (${title}) for course ${unique_name} (${course_id}) in database.`);
+                    console.log({
+                        message: `Updated submission status of assignment ${assignment_id} (${title}) for course ${unique_name} (${course_id}) in database.`,
+                        assignmentUpdate
+                    });
                     if (!assignmentUpdate.success) {
                         failCount++;
                         continue; 
@@ -160,7 +184,10 @@ async function submitLearnInfo_toDatabase(database, semester, courses, assignmen
                     const assignmentUpdate = await database.prepare('UPDATE Assignments SET due_date = ?, description = ?, annex_link = ? WHERE course_id = ? AND assignment_id = ?')
                         .bind(due_date, description, file_link, course_id, assignment_id)
                         .run();
-                    console.log(`${assignmentUpdate.success ? 'Success' : 'Failed'} to update assignment ${assignment_id} (${title}) for course ${unique_name} (${course_id}) in database.`);
+                    console.log({
+                        message: `Updated details${existingAssignment.due_date !== due_date ? ' (due_date)' : ''}${existingAssignment.description !== description ? ' (description)' : ''}${existingAssignment.annex_link !== file_link ? ' (annex_link)' : ''} for assignment ${assignment_id} (${title}) for course ${unique_name} (${course_id}) in database.`,
+                        assignmentUpdate
+                    });
                     if (!assignmentUpdate.success) {
                         failCount++;
                         continue;
@@ -194,7 +221,10 @@ async function submitLearnInfo_toTodoist(authToken, database, semester) {
     const courseQuery = await database.prepare('SELECT * FROM Courses WHERE semester = ?')
         .bind(semester)
         .run();
-    console.log(`${courseQuery.success ? 'Success' : 'Failed'} to query courses from database for Todoist.`);
+    console.log({
+        message: `Queried courses from database for Todoist.`,
+        courseQuery
+    });
     if (!courseQuery.success) {
         return { taskAddCount: 0, taskUpdateCount: 0, failCount: 1 };
     }
@@ -215,7 +245,10 @@ async function submitLearnInfo_toTodoist(authToken, database, semester) {
         const assignmentQuery = await database.prepare('SELECT * FROM Assignments WHERE course_id = ?')
             .bind(course_id)
             .run();
-        console.log(`${assignmentQuery.success ? 'Success' : 'Failed'} to query assignments for course ${course_name} (${course_id}) from database for Todoist.`);
+        console.log({
+            message: `Queried assignments for course ${course_name} (${course_id}) from database for Todoist.`,
+            assignmentQuery
+        });
         if (!assignmentQuery.success) {
             failureCount++;
             continue;
@@ -233,7 +266,10 @@ async function submitLearnInfo_toTodoist(authToken, database, semester) {
             const markIgnored = await database.prepare('UPDATE Assignments SET is_ignored = 1 WHERE assignment_id = ? AND course_id = ?')
                 .bind(assignment.assignment_id, assignment.course_id)
                 .run();
-            console.log(`${markIgnored.success ? 'Success' : 'Failed'} to mark assignment ${assignment.assignment_id} (${assignment.title}) as ignored in database.`);
+            console.log({
+                message: `Marked assignment ${assignment.assignment_id} (${assignment.title}) as ignored in database.`,
+                markIgnored
+            });
             if (!markIgnored.success) {
                 failureCount++;
             }

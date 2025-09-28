@@ -32,13 +32,13 @@ class TaskManager {
         if (!this.workingProject) {
             this.workingProject = await this.todoist.addProject({ name: semester });
             console.log({
-                message: 'Created new project for semester',
+                message: `Created new project for semester '${semester}'`,
                 semester: semester,
                 projectId: this.workingProject.id
             })
         } else {
             console.log({
-                message: 'Using existing project for semester',
+                message: `Using existing project for semester '${semester}'`,
                 semester: semester,
                 projectId: this.workingProject.id
             })
@@ -62,7 +62,7 @@ class TaskManager {
             if (!sections.find(section => section.name === sectionName)) {
                 await this.todoist.addSection({ projectId: targetProjectId, name: sectionName });
                 console.log({
-                    message: 'Created new section in project',
+                    message: `Created new section '${sectionName}' in project`,
                     projectId: targetProjectId,
                     sectionName: sectionName
                 })
@@ -91,7 +91,7 @@ class TaskManager {
             if (!labels.find(label => label.name === labelName)) {
                 await this.todoist.addLabel({ name: labelName, color: colorChoices[colorIndex % colorChoices.length] });
                 console.log({
-                    message: 'Created new label for course',
+                    message: `Created new label for course '${labelName}'`,
                     courseName: labelName
                 });
                 colorIndex++;
@@ -163,7 +163,7 @@ class TaskManager {
                         });
                     } catch (error) {
                         console.error({
-                            message: 'Failed to fetch completed tasks for assignment',
+                            message: `Failed to fetch completed tasks for assignment '${assignment.title}'`,
                             assignmentTitle: assignment.title,
                             error: error
                         });
@@ -174,7 +174,7 @@ class TaskManager {
                         // Assignment has been completed -> mark as ignored
                         toBeMarkedAsIgnored.push(assignment);
                         console.log({
-                            message: 'Assignment already completed, skipping addition and marking as ignored',
+                            message: `Assignment '${assignment.title}' already completed, skipping addition and marking as ignored`,
                             assignmentTitle: assignment.title
                         });
                         assignment.is_ignored = true;
@@ -192,9 +192,11 @@ class TaskManager {
                                 sectionId: this.workingSection.id
                             });
                             console.log({
-                                message: 'Created new task for assignment',
+                                message: `Created new task for assignment '${assignment.title}'`,
                                 assignmentTitle: assignment.title,
+                                description: assignment.description,
                                 dueString: dueString,
+                                priority: priority,
                                 labels: [assignment.course_name_and_code],
                                 taskId: task.id
                             });
@@ -202,6 +204,11 @@ class TaskManager {
                         } catch (error) {
                             console.error({
                                 message: `Failed to add task for assignment ${assignment.title}`,
+                                assignmentTitle: assignment.title,
+                                description: assignment.description,
+                                dueString: dueString,
+                                priority: priority,
+                                labels: [assignment.course_name_and_code],
                                 error: error
                             });
                             failureCount++;
@@ -218,7 +225,7 @@ class TaskManager {
                     try {
                         await this.todoist.closeTask(task.id);
                         console.log({
-                            message: 'Closed task for submitted or ignored assignment',
+                            message: `Closed task for submitted or ignored assignment '${assignment.title}'`,
                             assignmentTitle: assignment.title,
                             taskId: task.id
                         });
@@ -246,8 +253,9 @@ class TaskManager {
                                 priority: priority
                             });
                             console.log({
-                                message: 'Updated task for assignment',
+                                message: `Updated task for assignment '${assignment.title}'`,
                                 assignmentTitle: assignment.title,
+                                description: assignment.description,
                                 dueString: dueString,
                                 labels: [assignment.course_name_and_code],
                                 priority: priority
@@ -256,7 +264,7 @@ class TaskManager {
                         }
                     } catch (error) {
                         console.error({
-                            message: `Failed to update task for assignment ${assignment.title}`,
+                            message: `Failed to update task for assignment '${assignment.title}'`,
                             error: error
                         });
                         failureCount++;
